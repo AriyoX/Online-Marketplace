@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from item.models import Category, Item
-from . forms import SignUpForm
+from .forms import SignUpForm
 
 # Create your views here.
 def index(request):
@@ -19,12 +19,13 @@ def signup(request):
         form = SignUpForm(request.POST)
 
         if form.is_valid():
-            form.save
-            return redirect('/login')
+            # didnt add brackets to save, very crucial
+            form.save()
+            return redirect('/login/')
         
     else:
         form = SignUpForm()
 
     return render(request, 'base/signup.html', {
-        'form': form
+        'form': form,
     })
