@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 from .forms import NewItemForm, EditItemForm
-from .models import Item
+from .models import Item, Category
 
 # Create your views here.
 def detail(request, pk):
@@ -60,4 +61,24 @@ def edit(request, pk):
     return render(request, 'item/form.html', {
         'form': form,
         'title': 'Edit Item',
+    })
+
+def items(request):
+    query= request.GET.get('query', '')
+    category_id = request.GET.get('category', 0)
+    categories = Category.objects.all()
+    items = Item.objects.filter(is_sold=False)
+
+    if category_id:
+        items = items.filter(category_id=category_id)
+
+    # filter items based on name and description field with help of Q
+    if query:
+        items = items.filter(Q(name__icontains=query) | Q(description__icontains=query))
+
+    return render(request, 'item/items.html', {
+        'items': items,
+        'query': query,
+        'categories': categories,
+        'category_id': int(category_id),
     })
