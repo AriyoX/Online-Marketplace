@@ -30,3 +30,14 @@ def signup(request):
     return render(request, 'base/signup.html', {
         'form': form,
     })
+
+def categorical(request, pk):
+    categories = Category.objects.all()
+    chosen_category = Category.objects.get(pk=pk)
+    items = Item.objects.filter(category=chosen_category)
+
+    return render(request, 'base/categories.html', {
+        'categories': categories,
+        'items': items,
+        'chosen_category':chosen_category,
+    })
