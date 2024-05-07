@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 from item.models import Category, Item
 from .forms import SignUpForm
 
@@ -41,3 +42,7 @@ def categorical(request, pk):
         'items': items,
         'chosen_category':chosen_category,
     })
+
+def user_logout(request):
+    logout(request)
+    return redirect('/')
