@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 from .forms import NewItemForm, EditItemForm
 from .models import Item, Category
@@ -69,6 +70,10 @@ def items(request):
     categories = Category.objects.all()
     items = Item.objects.filter(is_sold=False)
 
+    paginator = Paginator(items, 6)  # Show 6 items per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     if category_id:
         items = items.filter(category_id=category_id)
 
@@ -77,7 +82,7 @@ def items(request):
         items = items.filter(Q(name__icontains=query) | Q(description__icontains=query))
 
     return render(request, 'item/items.html', {
-        'items': items,
+        'items': page_obj,
         'query': query,
         'categories': categories,
         'category_id': int(category_id),
